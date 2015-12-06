@@ -6766,7 +6766,7 @@ renderCtx2D.prototype.drawPose = function (spriter_pose, atlas_data)
 				ctxApplySpace(ctx, object.world_space);
 				ctx.scale(file.width/2, file.height/2);
 				ctxApplyAtlasSitePosition(ctx, site);
-				ctx.globalAlpha = object.alpha;
+				ctx.globalAlpha *= object.alpha;
 				ctxDrawImageMesh(ctx, triangles, positions, texcoords, image, site, page);
 				ctx.restore();
 			}
@@ -7253,6 +7253,8 @@ renderWebGL.prototype.drawPose = function (spriter_pose, atlas_data)
 	var gl_tex_matrix = render.gl_tex_matrix;
 	var gl_color = render.gl_color;
 
+	var alpha = gl_color[3];
+
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -7283,7 +7285,7 @@ renderWebGL.prototype.drawPose = function (spriter_pose, atlas_data)
 				mat3x3Identity(gl_tex_matrix);
 				mat3x3ApplyAtlasPageTexcoord(gl_tex_matrix, page);
 				mat3x3ApplyAtlasSiteTexcoord(gl_tex_matrix, site);
-				vec4Identity(gl_color); gl_color[3] = object.alpha;
+				gl_color[3] = alpha * object.alpha;
 				gl.useProgram(gl_shader.program);
 				gl.uniformMatrix3fv(gl_shader.uniforms['uProjection'], false, gl_projection);
 				gl.uniformMatrix3fv(gl_shader.uniforms['uModelview'], false, gl_modelview);
@@ -7308,6 +7310,8 @@ renderWebGL.prototype.drawPose = function (spriter_pose, atlas_data)
 			break;
 		}
 	});
+
+	gl_color[3] = alpha;
 }
 
 function vec4Identity (v)
