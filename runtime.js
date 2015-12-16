@@ -333,13 +333,13 @@ cr.plugins_.SpriterPlugin = function(runtime)
 			var tx = instance.x;
 			var ty = instance.y;
 			var rz = instance.angle * flip_x * flip_y;
-			//var sx = 0.5 * Math.abs(instance.width) / instance.extra.spriter_pose.data.skeleton.width;
-			//var sy = 0.5 * Math.abs(instance.height) / instance.extra.spriter_pose.data.skeleton.height;
+			var sx = 1.0;//0.5 * Math.abs(instance.width) / instance.extra.spriter_pose.data.skeleton.width;
+			var sy = -1.0;//0.5 * Math.abs(instance.height) / instance.extra.spriter_pose.data.skeleton.height;
 
 			mat4.multiply(glw.matP, glw.matMV, gl_projection);
 			mat4x4Translate(gl_projection, tx, ty, 0.0);
 			mat4x4RotateZ(gl_projection, rz);
-			//mat4x4Scale(gl_projection, sx, sy, 1.0);
+			mat4x4Scale(gl_projection, sx, sy, 1.0);
 
 			gl_color[3] = instance.opacity;
 
