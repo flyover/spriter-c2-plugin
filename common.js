@@ -6509,10 +6509,10 @@ RenderCtx2D = function(ctx) {
 
 /**
  * @return {void}
- * @param {spriter.Pose} spriter_pose
+ * @param {spriter.Data} spriter_data
  * @param {atlas.Data} atlas_data
  */
-RenderCtx2D.prototype.dropPose = function(spriter_pose, atlas_data) {
+RenderCtx2D.prototype.dropData = function(spriter_data, atlas_data) {
   var render = this;
   render.images = {};
   render.skin_info_map = {};
@@ -6520,11 +6520,11 @@ RenderCtx2D.prototype.dropPose = function(spriter_pose, atlas_data) {
 
 /**
  * @return {void}
- * @param {spriter.Pose} spriter_pose
+ * @param {spriter.Data} spriter_data
  * @param {atlas.Data} atlas_data
  * @param {Object.<string,HTMLImageElement>} images
  */
-RenderCtx2D.prototype.loadPose = function(spriter_pose, atlas_data, images) {
+RenderCtx2D.prototype.loadData = function(spriter_data, atlas_data, images) {
   var render = this;
 
   render.images = images;
@@ -6865,10 +6865,10 @@ RenderWebGL = function(gl) {
 
 /**
  * @return {void}
- * @param {spriter.Pose} spriter_pose
+ * @param {spriter.Data} spriter_data
  * @param {atlas.Data} atlas_data
  */
-RenderWebGL.prototype.dropPose = function(spriter_pose, atlas_data) {
+RenderWebGL.prototype.dropData = function(spriter_data, atlas_data) {
   var render = this;
   var gl = render.gl;
   if (!gl) {
@@ -6887,11 +6887,11 @@ RenderWebGL.prototype.dropPose = function(spriter_pose, atlas_data) {
 
 /**
  * @return {void}
- * @param {spriter.Pose} spriter_pose
+ * @param {spriter.Data} spriter_data
  * @param {atlas.Data} atlas_data
  * @param {Object.<string,HTMLImageElement>} images
  */
-RenderWebGL.prototype.loadPose = function(spriter_pose, atlas_data, images) {
+RenderWebGL.prototype.loadData = function(spriter_data, atlas_data, images) {
   var render = this;
   var gl = render.gl;
   if (!gl) {
@@ -6979,7 +6979,7 @@ RenderWebGL.prototype.loadPose = function(spriter_pose, atlas_data, images) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl_wrap_t);
     });
   } else {
-    spriter_pose.data.folder_array.forEach(function(folder) {
+    spriter_data.folder_array.forEach(function(folder) {
       folder.file_array.forEach(function(file) {
         switch (file.type) {
           case 'image':
@@ -7103,7 +7103,7 @@ function vec4ApplyColor(v, color) {
 
 function mat3x3Identity(m) {
   m[1] = m[2] = m[3] =
-    m[5] = m[6] = m[7] = 0.0;
+  m[5] = m[6] = m[7] = 0.0;
   m[0] = m[4] = m[8] = 1.0;
   return m;
 }
@@ -7207,8 +7207,8 @@ function mat3x3ApplyAtlasSitePosition(m, site) {
 
 function mat4x4Identity(m) {
   m[1] = m[2] = m[3] = m[4] =
-    m[6] = m[7] = m[8] = m[9] =
-    m[11] = m[12] = m[13] = m[14] = 0.0;
+  m[6] = m[7] = m[8] = m[9] =
+  m[11] = m[12] = m[13] = m[14] = 0.0;
   m[0] = m[5] = m[10] = m[15] = 1.0;
   return m;
 }

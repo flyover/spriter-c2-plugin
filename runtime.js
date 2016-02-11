@@ -76,6 +76,7 @@ cr.plugins_.SpriterPlugin = function(runtime) {
     console.log("Anim Key", anim_key);
 
     instance.extra.loading = true;
+    instance.extra.spriter_data = null;
     instance.extra.spriter_pose = null;
     instance.extra.atlas_data = null;
 
@@ -85,18 +86,19 @@ cr.plugins_.SpriterPlugin = function(runtime) {
         return;
       }
 
-      instance.extra.spriter_pose = new spriter.Pose(new spriter.Data().load(JSON.parse(text)));
+      instance.extra.spriter_data = new spriter.Data().load(JSON.parse(text));
+      instance.extra.spriter_pose = new spriter.Pose(instance.extra.spriter_data);
 
-      //console.log("Spriter Data Version", instance.extra.spriter_pose.data.skeleton.spriter);
+      //console.log("Spriter Data Version", instance.extra.spriter_data.skeleton.spriter);
 
-      //instance.width = instance.extra.spriter_pose.data.skeleton.width || instance.width;
-      //instance.height = instance.extra.spriter_pose.data.skeleton.height || instance.height;
+      //instance.width = instance.extra.spriter_data.skeleton.width || instance.width;
+      //instance.height = instance.extra.spriter_data.skeleton.height || instance.height;
       //instance.set_bbox_changed();
 
-      console.log("Entity Keys", instance.extra.spriter_pose.data.entity_keys);
+      console.log("Entity Keys", instance.extra.spriter_data.entity_keys);
       instance.extra.spriter_pose.setEntity(entity_key);
 
-      //console.log("Anim Keys", instance.extra.spriter_pose.data.anim_keys);
+      //console.log("Anim Keys", instance.extra.spriter_data.anim_keys);
       instance.extra.spriter_pose.setAnim(anim_key);
 
       loadText(atlas_url, function(err, text) {
@@ -265,8 +267,8 @@ cr.plugins_.SpriterPlugin = function(runtime) {
       var tx = instance.x - hw;
       var ty = hh - instance.y;
       var rz = -instance.angle;
-      //var sx = 0.5 * instance.width / instance.extra.spriter_pose.data.skeleton.width;
-      //var sy = 0.5 * instance.height / instance.extra.spriter_pose.data.skeleton.height;
+      //var sx = 0.5 * instance.width / instance.extra.spriter_data.skeleton.width;
+      //var sy = 0.5 * instance.height / instance.extra.spriter_data.skeleton.height;
 
       ctx.translate(tx, ty);
       ctx.rotate(rz);
@@ -306,8 +308,8 @@ cr.plugins_.SpriterPlugin = function(runtime) {
       var tx = instance.x;
       var ty = instance.y;
       var rz = instance.angle * flip_x * flip_y;
-      var sx = 1.0; //0.5 * Math.abs(instance.width) / instance.extra.spriter_pose.data.skeleton.width;
-      var sy = -1.0; //0.5 * Math.abs(instance.height) / instance.extra.spriter_pose.data.skeleton.height;
+      var sx = 1.0; //0.5 * Math.abs(instance.width) / instance.extra.spriter_data.skeleton.width;
+      var sy = -1.0; //0.5 * Math.abs(instance.height) / instance.extra.spriter_data.skeleton.height;
 
       mat4.multiply(glw.matP, glw.matMV, gl_projection);
       mat4x4Translate(gl_projection, tx, ty, 0.0);
@@ -415,24 +417,26 @@ cr.plugins_.SpriterPlugin = function(runtime) {
 
   Acts.prototype.SetPrevEntity = function() {
     var instance = this;
+    var spriter_data = instance.extra.spriter_data;
     var spriter_pose = instance.extra.spriter_pose;
-    var entity_index = spriter_pose.data.entity_keys.indexOf(spriter_pose.entity_key);
+    var entity_index = spriter_data.entity_keys.indexOf(spriter_pose.entity_key);
     if (entity_index <= 0) {
-      entity_index = spriter_pose.data.entity_keys.length;
+      entity_index = spriter_data.entity_keys.length;
     }
     --entity_index;
-    instance.extra.spriter_pose.setEntity(spriter_pose.data.entity_keys[entity_index]);
+    instance.extra.spriter_pose.setEntity(spriter_data.entity_keys[entity_index]);
   }
 
   Acts.prototype.SetNextEntity = function() {
     var instance = this;
+    var spriter_data = instance.extra.spriter_data;
     var spriter_pose = instance.extra.spriter_pose;
-    var entity_index = spriter_pose.data.entity_keys.indexOf(spriter_pose.entity_key);
+    var entity_index = spriter_data.entity_keys.indexOf(spriter_pose.entity_key);
     ++entity_index;
-    if (entity_index >= spriter_pose.data.entity_keys.length) {
+    if (entity_index >= spriter_data.entity_keys.length) {
       entity_index = 0;
     }
-    instance.extra.spriter_pose.setEntity(spriter_pose.data.entity_keys[entity_index]);
+    instance.extra.spriter_pose.setEntity(spriter_data.entity_keys[entity_index]);
   }
 
   Acts.prototype.SetAnim = function(anim_key) {
@@ -445,25 +449,27 @@ cr.plugins_.SpriterPlugin = function(runtime) {
 
   Acts.prototype.SetPrevAnim = function() {
     var instance = this;
+    var spriter_data = instance.extra.spriter_data;
     var spriter_pose = instance.extra.spriter_pose;
-    var anim_index = spriter_pose.data.anim_keys.indexOf(spriter_pose.anim_key);
+    var anim_index = spriter_data.anim_keys.indexOf(spriter_pose.anim_key);
     if (anim_index <= 0) {
-      anim_index = spriter_pose.data.anim_keys.length;
+      anim_index = spriter_data.anim_keys.length;
     }
     --anim_index;
-    instance.extra.spriter_pose.setAnim(spriter_pose.data.anim_keys[anim_index]);
+    instance.extra.spriter_pose.setAnim(spriter_data.anim_keys[anim_index]);
     instance.extra.loop_count = 0;
   }
 
   Acts.prototype.SetNextAnim = function() {
     var instance = this;
+    var spriter_data = instance.extra.spriter_data;
     var spriter_pose = instance.extra.spriter_pose;
-    var anim_index = spriter_pose.data.anim_keys.indexOf(spriter_pose.anim_key);
+    var anim_index = spriter_data.anim_keys.indexOf(spriter_pose.anim_key);
     ++anim_index;
-    if (anim_index >= spriter_pose.data.anim_keys.length) {
+    if (anim_index >= spriter_data.anim_keys.length) {
       anim_index = 0;
     }
-    instance.extra.spriter_pose.setAnim(spriter_pose.data.anim_keys[anim_index]);
+    instance.extra.spriter_pose.setAnim(spriter_data.anim_keys[anim_index]);
     instance.extra.loop_count = 0;
   }
 
